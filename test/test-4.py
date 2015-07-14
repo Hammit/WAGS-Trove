@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
 import os
-import urllib.parse
 import requests
 
 TROVE_API_KEY = os.getenv('TROVE_API_KEY', '')
 TROVE_API_ENCODING = 'json'
-TROVE_API_URL_BASE = 'http://api.trove.nla.gov.au/result?%s'
+TROVE_API_URL_BASE = 'http://api.trove.nla.gov.au/result'
 
 zone  = 'newspaper'
 query = '11th Battalion'
@@ -18,11 +17,8 @@ params = {
     's': 0,
     'encoding': TROVE_API_ENCODING
 }
-url_params = urllib.parse.urlencode(params)
-url = TROVE_API_URL_BASE % url_params
 
-print("Request: %s" % url)
-r = requests.get(url)
+r = requests.get(TROVE_API_URL_BASE, params=params)
 if r.status_code == requests.codes.ok:
     response = r.json()
     print("Response: Query == %s" % response['response']['query'])
