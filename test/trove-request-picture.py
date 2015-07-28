@@ -29,12 +29,12 @@ class TroveRequest:
 
 
 if __name__ == "__main__":
-    trove = TroveRequest(api_key=TROVE_API_KEY)
+    trove = TroveRequest(api_key=TROVE_API_KEY, zone='picture')
     trove_query_params = {
         's': 0,               # start
         'n': 50,              # num of results
         'l-illustrated': 'Y',
-        'zone': 'picture',
+        'reclevel': 'full',
     }
     trove.get(query='11th Battalion date:[1914 TO 1921]', params=trove_query_params)
     print("Request URL: %s" % trove.response.url)
@@ -45,6 +45,11 @@ if __name__ == "__main__":
         response = trove.response.json()
         print("Response Records: %s" % response['response'])
         print("%s Records" % response['response']['zone'][0]['records']['total'])
-        for picture in response['response']['zone'][0]['work']:
+        for picture in response['response']['zone'][0]['records']['work']:
             print("Picture URL: %s" % picture['url'])
             print("Trove URL: %s" % picture['troveUrl'])
+            # picture['identifier'] is not None:
+            if 'identifier' in picture:
+                for identifier in picture['identifier']:
+                    if identifier['linktype'] == 'thumbnail':
+                        print("Picture Thumbnail: %s" % identifier['value'])
