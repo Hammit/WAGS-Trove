@@ -17,7 +17,7 @@ query_params = {
     'l-title': newspapers.get_ids(state='wa'),  # restrict to given newspapers
     'reclevel': 'full',                         # full detail records
     's': 0,                                     # start
-    'n': 50,                                    # num of results
+    'n': 25,                                    # n results
 }
 trove.get(query='11th Battalion date:[1914 TO 1921]', params=query_params)
 
@@ -30,6 +30,11 @@ else:
     # print("Response Records: %s" % response['response'])
     print("%s Records (Total)" % response['response']['zone'][0]['records']['total'])
     for article in response['response']['zone'][0]['records']['article']:
+        image_url = 'http://trove.nla.gov.au/ndp/del/printArticleJpg/{0}/3?print=n'.format(article['id'])
         print("Article")
         print("\tURL: %s" % article['url'])
         print("\tPDF: %s" % article['pdf'])
+        print("\tImage: %s" % image_url)
+
+        r = requests.get(image_url)
+        # if r.status_code == requests.codes.ok:
