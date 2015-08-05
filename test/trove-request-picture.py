@@ -33,7 +33,8 @@ if __name__ == "__main__":
     trove_query_params = {
         's': 0,               # start
         'n': 50,              # num of results
-        'l-illustrated': 'Y',
+        # 'l-illustrated': 'Y',
+        'l-availability': 'y/f',
         'reclevel': 'full',
     }
     trove.get(query='11th Battalion date:[1914 TO 1921]', params=trove_query_params)
