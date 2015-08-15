@@ -1,4 +1,7 @@
 import requests
+import os
+import shutil
+from urllib.parse import urlparse
 
 
 class Request:
@@ -72,3 +75,26 @@ class NewspaperTitlesRequest:
             # print("Response Records: %s" % response['response']['records']['newspaper'])
             url_params = self.url_params(newspaper_ids)
             return url_params
+
+
+class Downloader:
+    BASE_DIR = '/tmp/WAGS-Trove'
+
+    @classmethod
+    def _image_path(cls, url):
+        parsed_url = urlparse(url)
+        sections = parsed_url.path.split('/')
+        image_name = sections[-1]
+        path = os.path.join(cls.BASE_DIR, image_name)
+        return path
+
+    @classmethod
+    def download_url(cls, url):
+        r = requests.get(url, stream=True)
+        if r.status_code != requests.codes.ok:
+            raise RuntimeError("{0} Error downloading image: {1}".format(r.status_code, url))
+        else:
+            path = cls._image_path(url)
+            with open(path, 'wb') as f:
+                r.raw.decode_content = True
+                shutil.copyfileobj(r.raw, f)
