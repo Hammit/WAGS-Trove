@@ -2,6 +2,10 @@
 
 import os
 import requests
+from bs4 import BeautifulSoup
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '../lib'))
+from trove.request import Downloader as TroveDownloader
 
 
 class TroveRequest:
@@ -67,6 +71,7 @@ class TroveResponse:
 
 
 if __name__ == "__main__":
+    TROVE_URL_BASE = 'http://trove.nla.gov.au'
     TROVE_API_KEY = os.getenv('TROVE_API_KEY', '')
 
     request = TroveRequest(TROVE_API_KEY)
@@ -86,6 +91,20 @@ if __name__ == "__main__":
             response.json['response']['zone'][0]['records']['total'],
             response.json['response']['zone'][0]['records']['s']
         ))
+        for article in response.json['response']['zone'][0]['records']['article']:
+            image_url = 'http://trove.nla.gov.au/ndp/del/printArticleJpg/{0}/3'.format(article['id'])
+            print("Article")
+            print("\tURL: %s" % article['url'])
+            print("\tPDF: %s" % article['pdf'])
+            print("\tImage: %s" % image_url)
+
+            r = requests.get(image_url)
+            if r.status_code == requests.codes.ok:
+                html_doc = r.text
+                soup = BeautifulSoup(html_doc, 'html.parser')
+                image = soup.select('img#articleImg')[0]
+                TroveDownloader.download_url(TROVE_URL_BASE + image['src'])
+
         # Get the next page if any
         if not response.has_next_page():
             break
