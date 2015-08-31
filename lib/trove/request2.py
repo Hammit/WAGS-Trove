@@ -1,4 +1,7 @@
 import requests
+import os
+import shutil
+from urllib.parse import urlparse
 
 
 class TroveRequest:
@@ -61,3 +64,28 @@ class TroveResponse:
             next_page_url = None
 
         return next_page_url
+
+
+class TroveDownloader:
+    def __init__(self, download_dir=None):
+        if download_dir is not None:
+            self.download_dir = download_dir
+        else:
+            self.download_dir = '/tmp/WAGS-Trove'
+
+    def _image_path(self, url):
+        parsed_url = urlparse(url)
+        sections = parsed_url.path.split('/')
+        image_name = sections[-1]
+        path = os.path.join(self.download_dir, image_name)
+        return path
+
+    def download_url(self, url):
+        r = requests.get(url, stream=True)
+        if r.status_code != requests.codes.ok:
+            raise RuntimeError("{0} Error downloading image: {1}".format(r.status_code, url))
+        else:
+            path = self._image_path(url)
+            with open(path, 'wb') as f:
+                r.raw.decode_content = True
+                shutil.copyfileobj(r.raw, f)
