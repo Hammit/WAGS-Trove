@@ -77,11 +77,12 @@ if __name__ == "__main__":
     request = TroveRequest(TROVE_API_KEY)
     request_params = {
         's': 0,
-        'n': 75,
+        'n': 100,
+        'l-illustrated': 'Y',
         'l-availability': 'y/f',
         'reclevel': 'full',
     }
-    response = request.query('11th Battalion date:[1914 TO 1914]', zone='newspaper', params=request_params)
+    response = request.query('"11th Battalion" date:[1914 TO 1921]', zone='newspaper', params=request_params)
     while response.has_results():
         # Process the results
         print("Processing Records")
