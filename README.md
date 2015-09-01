@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-* Python 3
+* Python 3.4
 * Requests
 * Beautiful Soup 4
 
